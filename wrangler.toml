@@ -1,0 +1,39 @@
+# Cloudflare Worker config for personal-brain-mcp.
+# Secrets are set via `wrangler secret put <NAME>` — do not commit them.
+#
+# Required secrets:
+#   SUPABASE_URL
+#   SUPABASE_SERVICE_ROLE_KEY
+#   OPENAI_API_KEY
+#   MCP_BEARER_TOKEN          — for MCP tool access (Claude Desktop, Cursor, n8n)
+#   INGEST_BEARER_TOKEN       — for iPhone Shortcuts and webhooks (write-only)
+#
+# Optional secrets (set only if you use the corresponding bot):
+#   INBOUND_ALLOWED_USERS     — 'telegram:<id>,discord:<id>' allowlist
+#   TELEGRAM_BOT_TOKEN, TELEGRAM_WEBHOOK_SECRET
+#   DISCORD_APP_ID, DISCORD_PUBLIC_KEY, DISCORD_BOT_TOKEN
+#   WHATSAPP_VERIFY_TOKEN, WHATSAPP_APP_SECRET, WHATSAPP_PHONE_NUMBER_ID, WHATSAPP_ACCESS_TOKEN
+
+name = "personal-brain-mcp"
+main = "src/index.ts"
+compatibility_date = "2026-05-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Logging on by default; tail with `wrangler tail`
+[observability]
+enabled = true
+
+# Scheduled jobs.
+# Default: daily at 13:00 UTC = 08:00 America/New_York (winter) or 09:00 (summer).
+# Cloudflare uses UTC and does NOT track DST; pick a UTC slot you're comfortable with year-round.
+# Examples:
+#   "0 13 * * *"     daily 13:00 UTC
+#   "0 13,21 * * *"  twice daily 13:00 and 21:00 UTC
+#   "0 13 * * 1-5"   weekday-only at 13:00 UTC
+[triggers]
+crons = ["0 13 * * *"]
+
+# To attach a custom domain, add a route here AFTER first deploy:
+# [[routes]]
+# pattern = "mcp-personal.yourdomain.com"
+# custom_domain = true

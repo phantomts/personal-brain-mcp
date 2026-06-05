@@ -1,0 +1,32 @@
+{
+  "name": "personal-brain-mcp",
+  "version": "0.5.0",
+  "description": "A personal-life MCP server on Cloudflare Workers + Supabase. Memory, family, home, vehicles, pets, health, finance — all your data, one queryable brain.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "db:push": "supabase db push",
+    "db:types": "supabase gen types typescript --linked --schema brain > src/lib/types.ts",
+    "migrate:notion": "tsx scripts/migrate-from-notion.ts",
+    "embed:backfill": "tsx scripts/backfill-embeddings.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@supabase/supabase-js": "^2.45.0",
+    "openai": "^4.60.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240909.0",
+    "@notionhq/client": "^2.2.15",
+    "@types/node": "^22.5.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.0.0",
+    "wrangler": "^3.78.0"
+  }
+}

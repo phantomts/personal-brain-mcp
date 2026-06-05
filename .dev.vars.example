@@ -1,0 +1,28 @@
+# Copy to .dev.vars (gitignored) and fill in real values for local dev.
+# Generate tokens with: openssl rand -hex 32
+
+# Core (required)
+SUPABASE_URL=https://YOUR-PROJECT.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=eyJ...service-role-key...
+OPENAI_API_KEY=sk-...
+MCP_BEARER_TOKEN=for-MCP-clients-claude-desktop-cursor-n8n
+INGEST_BEARER_TOKEN=for-iphone-shortcuts-and-webhooks-write-only
+
+# Inbound chat (required if using any bot)
+# Allowlist: comma-separated <source>:<external_user_id>
+INBOUND_ALLOWED_USERS=telegram:123456,discord:987654321
+
+# Telegram (required if /inbound/telegram is used)
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_WEBHOOK_SECRET=
+
+# Discord (required if /inbound/discord is used)
+DISCORD_APP_ID=
+DISCORD_PUBLIC_KEY=
+DISCORD_BOT_TOKEN=
+
+# WhatsApp (optional — stubbed; only fill in if you finish implementation)
+WHATSAPP_VERIFY_TOKEN=
+WHATSAPP_APP_SECRET=
+WHATSAPP_PHONE_NUMBER_ID=
+WHATSAPP_ACCESS_TOKEN=
