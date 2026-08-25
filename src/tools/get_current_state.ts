@@ -4,7 +4,7 @@
  * with the user" snapshot.
  */
 import { z } from "zod";
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { ToolRegistrar as McpServer } from "../protocol/registry";
 import type { ToolCtx } from "../mcp";
 import { ok, fail } from "../lib/errors";
 
@@ -37,7 +37,9 @@ export function register(server: McpServer, ctx: ToolCtx) {
         const want = (k: string) => !include || include.length === 0 || (include as string[]).includes(k);
         const out: string[] = ["# Current state\n"];
 
-        const queries: Array<Promise<any>> = [];
+        // Supabase query builders are thenable but not Promise-typed; PromiseLike keeps
+        // Promise.all happy without casting every call site.
+        const queries: Array<PromiseLike<any>> = [];
         if (want("active_projects"))
           queries.push(ctx.supabase.from("house_projects").select("name, status").in("status", ["in_progress", "blocked"]));
         if (want("active_personal_projects"))

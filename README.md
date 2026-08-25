@@ -5,7 +5,7 @@
 ```
 Claude Desktop / Cursor / n8n / your own agents
                 │
-                │  HTTPS + SSE + Bearer token
+                │  POST /mcp — Streamable HTTP (stateless) + Bearer or OAuth
                 ▼
         Cloudflare Worker  ◄────  iPhone Shortcuts (capture, health)
         (this repo)        ◄────  Telegram / Discord bots (chat capture)
@@ -16,9 +16,13 @@ Claude Desktop / Cursor / n8n / your own agents
         (schema: brain)
 ```
 
+Implements MCP protocol revision **2026-07-28** (stateless Streamable HTTP),
+with a compatibility path for 2025-11-25 / 2025-06-18 / 2025-03-26 clients.
+Coming from an older build? See [MIGRATION-2026-07-28.md](./MIGRATION-2026-07-28.md).
+
 ## What it is
 
-A personal-life database with **47 tools** + **4 HTTP ingest endpoints** + **inbound chat bots** across 13 domains, with semantic search, hybrid retrieval (vector + keyword), and a four-layer memory model.
+A personal-life database with **54 tools** + **4 HTTP ingest endpoints** + **inbound chat bots** across 13 domains, with semantic search, hybrid retrieval (vector + keyword), and a four-layer memory model.
 
 You stand it up once, then use it from any MCP-aware AI client. It's your brain; you own the data; it runs on free tiers.
 

@@ -211,14 +211,21 @@ curl http://localhost:8787/health
 
 Test MCP auth blocking:
 ```bash
-curl -i http://localhost:8787/sse
+curl -i -X GET http://localhost:8787/mcp
+# → 405. The GET stream was removed in MCP 2026-07-28; the endpoint is POST-only.
 # → 401 unauthorized
 ```
 
 Test MCP auth working:
 ```bash
-curl -H "Authorization: Bearer YOUR_MCP_TOKEN" http://localhost:8787/sse --no-buffer
-# → opens an SSE stream. Ctrl-C to close.
+curl -X POST http://localhost:8787/mcp \
+  -H "Authorization: Bearer YOUR_MCP_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -H "MCP-Protocol-Version: 2026-07-28" \
+  -H "Mcp-Method: server/discover" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"server/discover","params":{"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientCapabilities":{}}}}'
+# → supportedVersions, capabilities, instructions, resultType: "complete".
 ```
 
 Test ingest:
@@ -240,11 +247,11 @@ npx @modelcontextprotocol/inspector
 ```
 
 Browser opens. Configure:
-- **Transport type:** SSE
-- **URL:** `http://localhost:8787/sse`
+- **Transport type:** Streamable HTTP
+- **URL:** `http://localhost:8787/mcp`
 - **Headers:** `Authorization: Bearer YOUR_MCP_TOKEN`
 
-Click **Connect**. You should see ~47 tools listed in the left panel.
+Click **Connect**. You should see 54 tools listed in the left panel, sorted by name.
 
 Try:
 - `identity(action="get")` → returns the empty seeded row
@@ -320,7 +327,7 @@ Add:
 {
   "mcpServers": {
     "personal-brain": {
-      "url": "https://personal-brain-mcp.your-subdomain.workers.dev/sse",
+      "url": "https://personal-brain-mcp.your-subdomain.workers.dev/mcp",
       "headers": {
         "Authorization": "Bearer YOUR_MCP_TOKEN"
       }
@@ -336,8 +343,9 @@ Restart Claude Desktop. The MCP indicator in the input bar should show "personal
 ### Other clients
 
 - **Cursor:** Settings → MCP → Add Server (same URL + headers)
-- **n8n:** MCP node → SSE transport → URL + bearer header
-- **Custom Python/JS agent:** Use the official MCP SDK with the SSE transport pointed at your URL
+- **n8n:** MCP node → Streamable HTTP transport → URL + bearer header
+- **Custom Python/JS agent:** Use the official MCP SDK with the Streamable HTTP transport pointed at your URL
+- **Clients that only speak the old HTTP+SSE transport:** put [`mcp-remote`](https://github.com/geelen/mcp-remote) in front
 
 ### Drop in the system prompt
 
@@ -440,7 +448,7 @@ The `wrangler.toml` requires `nodejs_compat`. If your Cloudflare account is olde
 
 ### MCP Inspector connects but no tools show
 
-Usually a verify/parse error on the SSE handshake. Check `wrangler tail` while connecting; you'll see the request and any errors.
+Check `wrangler tail` while connecting. Common causes: the client is still pointed at `/sse` (removed — it returns `410`), a missing `Mcp-Method` or `Mcp-Name` header (`400` with JSON-RPC `-32020`), or a protocol version the server does not support (`-32022`, whose `data.supported` lists the accepted revisions).
 
 ### Embeddings fail with rate-limit errors
 

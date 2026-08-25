@@ -2,7 +2,7 @@
  * pets — list/add pets, log health events, find due vaccinations.
  */
 import { z } from "zod";
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { ToolRegistrar as McpServer } from "../protocol/registry";
 import type { ToolCtx } from "../mcp";
 import { ok, fail } from "../lib/errors";
 

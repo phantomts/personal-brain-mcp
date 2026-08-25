@@ -2,7 +2,7 @@
  * reading_list — to-read, reading, finished. Books, articles, papers, essays.
  */
 import { z } from "zod";
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { ToolRegistrar as McpServer } from "../protocol/registry";
 import type { ToolCtx } from "../mcp";
 import { ok, fail } from "../lib/errors";
 

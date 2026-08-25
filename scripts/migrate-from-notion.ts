@@ -163,7 +163,7 @@ async function main() {
         if (!row) continue;
 
         // skip if already imported (requires temporary `notion_id` column)
-        const { data: existing } = await supa
+        const { data: existing } = await (supa as any)
           .from(src.target)
           .select("id")
           .eq("notion_id" as any, page.id)
