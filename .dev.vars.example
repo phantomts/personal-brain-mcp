@@ -26,3 +26,15 @@ WHATSAPP_VERIFY_TOKEN=
 WHATSAPP_APP_SECRET=
 WHATSAPP_PHONE_NUMBER_ID=
 WHATSAPP_ACCESS_TOKEN=
+
+# Browser origins allowed to reach POST /mcp (DNS-rebinding protection).
+# Leave unset unless a browser-based client needs access; "*" allows all.
+MCP_ALLOWED_ORIGINS=
+
+# OAuth 2.1 resource-server mode (optional).
+# Set both to switch off static bearer and validate access tokens against an
+# authorization server, including RFC 8707 audience binding.
+OAUTH_ISSUER=
+MCP_RESOURCE=https://personal-brain-mcp.your-subdomain.workers.dev/mcp
+# Only needed if the issuer's JWKS is not at <issuer>/.well-known/jwks.json
+OAUTH_JWKS_URL=

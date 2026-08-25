@@ -1,6 +1,8 @@
 # Tool catalog — personal-brain-mcp v0.3
 
-47 tools across 13 domains, plus 4 ingest endpoints. See [MEMORY.md](./MEMORY.md) for the four-layer memory model and [shortcuts/README.md](./shortcuts/README.md) for iPhone Shortcut configs.
+54 tools across 13 domains, plus 4 ingest endpoints. Every tool ships
+`ToolAnnotations` (`readOnlyHint`, `destructiveHint`, `idempotentHint`,
+`openWorldHint`); the source of truth is `src/protocol/annotations.ts`. See [MEMORY.md](./MEMORY.md) for the four-layer memory model and [shortcuts/README.md](./shortcuts/README.md) for iPhone Shortcut configs.
 
 ## Memory primitives (4)
 

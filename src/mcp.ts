@@ -1,12 +1,16 @@
 /**
- * MCP server factory. Builds a fresh McpServer per SSE connection
- * with all tools registered.
+ * Tool registry factory. Builds the full tool catalog once per isolate.
+ *
+ * The transport is stateless (2026-07-28), so there is no per-connection
+ * server object any more — the catalog is metadata plus handlers bound to env.
  *
  * Adding a new tool:
  *   1. Create src/tools/<your_tool>.ts exporting `register(server, ctx)`.
  *   2. Import and call it below.
+ *   3. Add it to READ_ONLY_TOOLS / DESTRUCTIVE_TOOLS / APPEND_ONLY_TOOLS in
+ *      src/protocol/annotations.ts so its hints are honest.
  */
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { ToolRegistry } from "./protocol/registry";
 import type { Env } from "./index";
 import { createSupabase } from "./lib/supabase";
 import { createEmbedder } from "./lib/embeddings";
@@ -97,11 +101,8 @@ export interface ToolCtx {
   embed: ReturnType<typeof createEmbedder>;
 }
 
-export function buildServer(env: Env): McpServer {
-  const server = new McpServer(
-    { name: "personal-brain", version: "0.3.0" },
-    { capabilities: { tools: {} } },
-  );
+export function buildRegistry(env: Env): ToolRegistry {
+  const server = new ToolRegistry();
 
   const ctx: ToolCtx = {
     env,

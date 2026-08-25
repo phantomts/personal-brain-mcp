@@ -3,13 +3,14 @@
  *
  * This is the reference tool. New tools should follow this shape:
  *   1. Zod schema for inputs
- *   2. server.tool(name, description, schema, handler)
- *   3. Handler returns ok(markdown) | fail(message)
+ *   2. Zod schema for outputs, declared as `outputSchema`
+ *   3. server.tool(name, config, handler)
+ *   4. Handler returns okStructured(markdown, data) | fail(message)
  */
 import { z } from "zod";
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { ToolRegistrar as McpServer } from "../protocol/registry";
 import type { ToolCtx } from "../mcp";
-import { ok, fail } from "../lib/errors";
+import { okStructured, fail } from "../lib/errors";
 
 const inputSchema = {
   query: z.string().min(1).describe("Natural-language search query"),
@@ -18,11 +19,35 @@ const inputSchema = {
   limit: z.number().int().min(1).max(50).default(10),
 };
 
+/**
+ * Declared output shape. Clients that support structured content get typed
+ * rows; the text block stays for the model.
+ */
+const outputSchema = z.object({
+  matches: z.array(
+    z.object({
+      id: z.string(),
+      type: z.string(),
+      title: z.string().nullable(),
+      excerpt: z.string(),
+      tags: z.array(z.string()),
+      occurred_at: z.string(),
+      similarity: z.number(),
+    }),
+  ),
+  count: z.number().int(),
+});
+
 export function register(server: McpServer, ctx: ToolCtx) {
   server.tool(
     "search_memory",
-    "Search your personal memory (journal, decisions, facts, gratitudes) using semantic similarity. Returns the most relevant entries with type, date, and excerpt.",
-    inputSchema,
+    {
+      title: "Search memory",
+      description:
+        "Search your personal memory (journal, decisions, facts, gratitudes) using semantic similarity. Returns the most relevant entries with type, date, and excerpt.",
+      inputSchema,
+      outputSchema,
+    },
     async ({ query, scope, limit }) => {
       try {
         const embedding = await ctx.embed.one(query);
@@ -41,8 +66,20 @@ export function register(server: McpServer, ctx: ToolCtx) {
           occurred_at: string;
           similarity: number;
         }>;
-        if (rows.length === 0) return ok("No matching memories.");
-        return ok(format(rows));
+        const structured = {
+          matches: rows.map((r) => ({
+            id: r.id,
+            type: r.type,
+            title: r.title,
+            excerpt: r.body.length > 400 ? `${r.body.slice(0, 400)}…` : r.body,
+            tags: r.tags,
+            occurred_at: r.occurred_at,
+            similarity: r.similarity,
+          })),
+          count: rows.length,
+        };
+        if (rows.length === 0) return okStructured("No matching memories.", structured);
+        return okStructured(format(rows), structured);
       } catch (e) {
         return fail("search_memory failed", e);
       }

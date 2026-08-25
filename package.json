@@ -1,7 +1,7 @@
 {
   "name": "personal-brain-mcp",
-  "version": "0.5.0",
-  "description": "A personal-life MCP server on Cloudflare Workers + Supabase. Memory, family, home, vehicles, pets, health, finance — all your data, one queryable brain.",
+  "version": "0.6.0",
+  "description": "A personal-life MCP server on Cloudflare Workers + Supabase. Memory, family, home, vehicles, pets, health, finance \u2014 all your data, one queryable brain.",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -15,10 +15,10 @@
     "embed:backfill": "tsx scripts/backfill-embeddings.ts"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0",
     "@supabase/supabase-js": "^2.45.0",
     "openai": "^4.60.0",
-    "zod": "^3.23.0"
+    "zod": "^3.23.0",
+    "zod-to-json-schema": "^3.24.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240909.0",
@@ -27,6 +27,6 @@
     "tsx": "^4.19.0",
     "typescript": "^5.6.0",
     "vitest": "^2.0.0",
-    "wrangler": "^3.78.0"
+    "wrangler": "^4.86.0"
   }
 }

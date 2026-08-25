@@ -2,7 +2,7 @@
  * vehicles — fleet + service history, mileage-aware "what's due" logic.
  */
 import { z } from "zod";
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { ToolRegistrar as McpServer } from "../protocol/registry";
 import type { ToolCtx } from "../mcp";
 import { ok, fail } from "../lib/errors";
 
